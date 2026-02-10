@@ -1,101 +1,123 @@
-const loggedUser = JSON.parse(localStorage.getItem('loggedUser'));
-if(!loggedUser) window.location = 'index.html';
+// Simulação de funcionário logado
+let funcionario = {
+    nome: "João",
+    jornada: 8, // horas (6, 8 ou 12)
+    registros: [] // cada registro: {data: "2026-02-09", entradas: [], saidas: []}
+};
 
-document.getElementById('user-name').textContent = loggedUser.username;
+// Relógio digital
+const relogio = document.getElementById("relogio");
+setInterval(() => {
+    let now = new Date();
+    relogio.textContent = now.toLocaleTimeString('pt-BR');
+}, 1000);
 
-const currentTimeEl = document.getElementById('current-time');
-const currentDateEl = document.getElementById('current-date');
-const historyTable = document.getElementById('history-table');
-const clockInBtn = document.getElementById('clock-in-btn');
-const clockOutBtn = document.getElementById('clock-out-btn');
-const workedHoursEl = document.getElementById('worked-hours');
-const balanceHoursEl = document.getElementById('balance-hours');
-const weekDaysEl = document.getElementById('week-days');
+// Botões de ponto
+document.getElementById("entrada").addEventListener("click", () => registrarHora("entrada"));
+document.getElementById("saida").addEventListener("click", () => registrarHora("saida"));
 
-let users = JSON.parse(localStorage.getItem('users'));
-let user = users.find(u=>u.username===loggedUser.username);
-let history = user.history || [];
+function registrarHora(tipo){
+    let hoje = new Date().toISOString().split('T')[0];
+    let registro = funcionario.registros.find(r => r.data === hoje);
+    if(!registro){
+        registro = {data: hoje, entradas: [], saidas: [], folga: false};
+        funcionario.registros.push(registro);
+    }
 
-// Atualiza relógio
-function updateClock(){
-    const now = new Date();
-    currentTimeEl.textContent = now.toLocaleTimeString('pt-BR');
-    currentDateEl.textContent = now.toLocaleDateString('pt-BR');
-}
-setInterval(updateClock,1000);
-updateClock();
+    // Limite 4 registros
+    if(registro.entradas.length + registro.saidas.length >= 4){
+        alert("Limite de 4 registros por dia atingido!");
+        return;
+    }
 
-// Calcula horas trabalhadas
-function calculateHours(){
-    let total = 0;
-    for(let i=0;i<history.length;i+=2){
-        const entrada = history[i];
-        const saida = history[i+1];
-        if(entrada && saida){
-            const diff = (new Date(saida.time) - new Date(entrada.time))/1000/3600;
-            total += diff;
+    let horaAtual = new Date().toLocaleTimeString('pt-BR');
+    if(tipo === "entrada"){
+        registro.entradas.push(horaAtual);
+    } else {
+        registro.saidas.push(horaAtual);
+    }
+
+    // Se jornada 12h, marca próximo dia como folga automaticamente
+    if(funcionario.jornada === 12 && registro.entradas.length + registro.saidas.length >= 2){
+        let amanha = new Date();
+        amanha.setDate(amanha.getDate()+1);
+        let dataAmanha = amanha.toISOString().split('T')[0];
+        if(!funcionario.registros.find(r => r.data === dataAmanha)){
+            funcionario.registros.push({data: dataAmanha, entradas: [], saidas: [], folga: true});
         }
     }
-    const balance = total - user.workHours;
-    workedHoursEl.textContent = total.toFixed(2);
-    balanceHoursEl.textContent = balance.toFixed(2);
+
+    atualizarResumo();
+    atualizarHistorico();
 }
 
-// Renderiza histórico
-function renderHistory(){
-    historyTable.innerHTML = '';
-    history.forEach(h=>{
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${new Date(h.time).toLocaleTimeString('pt-BR')}</td><td>${h.type}</td>`;
-        historyTable.appendChild(tr);
-    });
-    calculateHours();
-    updateWeekDays();
-}
+function atualizarResumo(){
+    let hoje = new Date().toISOString().split('T')[0];
+    let registro = funcionario.registros.find(r => r.data === hoje);
+    let tempoTrabalhado = 0;
 
-// Atualiza botão dos dias da semana
-function updateWeekDays(){
-    const today = new Date();
-    const dayButtons = weekDaysEl.querySelectorAll('button');
-
-    dayButtons.forEach(btn=>{
-        const day = parseInt(btn.dataset.day);
-
-        if(user.workHours < 12 && (day===0 || day===6)){
-            btn.disabled = true;
-        } else {
-            btn.disabled = false;
-        }
-    });
-
-    // Se 12h já registradas, próximo dia vira folga
-    if(user.workHours >= 12){
-        const lastEntry = history.length ? new Date(history[history.length-1].time) : null;
-        if(lastEntry){
-            const nextDay = (lastEntry.getDay() + 1) % 7;
-            dayButtons.forEach(btn=>{
-                if(parseInt(btn.dataset.day) === nextDay) btn.disabled = true;
-            });
+    if(registro){
+        for(let i=0; i<registro.entradas.length; i++){
+            let entrada = toMinutes(registro.entradas[i]);
+            let saida = registro.saidas[i] ? toMinutes(registro.saidas[i]) : entrada;
+            tempoTrabalhado += (saida - entrada);
         }
     }
+
+    let saldoDia = tempoTrabalhado - (funcionario.jornada*60);
+    document.getElementById("jornadaDia").textContent = formatMinutes(funcionario.jornada*60);
+    document.getElementById("tempoTrabalhado").textContent = formatMinutes(tempoTrabalhado);
+    document.getElementById("saldoDia").textContent = (saldoDia>=0? "":"-") + formatMinutes(Math.abs(saldoDia));
+
+    // Atualizar saldo mensal e total
+    let saldoMes = funcionario.registros.reduce((acc, r) => {
+        let dia = 0;
+        for(let i=0; i<r.entradas.length; i++){
+            let entrada = toMinutes(r.entradas[i]);
+            let saida = r.saidas[i]? toMinutes(r.saidas[i]) : entrada;
+            dia += (saida-entrada);
+        }
+        return acc+dia;
+    }, 0);
+
+    document.getElementById("saldoMes").querySelector("h2").textContent = formatMinutes(saldoMes);
+    document.getElementById("saldoTotal").querySelector("h2").textContent = (saldoMes<0?"-":"") + formatMinutes(Math.abs(saldoMes));
 }
 
-// Registrar ponto
-function register(type){
-    const now = new Date();
-    history.push({type,time: now.toISOString()});
-    user.history = history;
-    users = users.map(u=> u.username===user.username ? user : u);
-    localStorage.setItem('users', JSON.stringify(users));
-    renderHistory();
+function atualizarHistorico(){
+    let tbody = document.getElementById("historico");
+    tbody.innerHTML = "";
+    funcionario.registros.forEach(r=>{
+        let tr = document.createElement("tr");
+        let data = new Date(r.data);
+        let diaSemana = data.getDay(); // 0 = Domingo, 6 = Sábado
+        let desabilitado = (funcionario.jornada<12 && (diaSemana===0 || diaSemana===6)) || r.folga;
+
+        tr.innerHTML = `
+            <td>${r.folga ? "Folga" : r.data}</td>
+            <td class="${desabilitado?'disabled':''}">${r.entradas[0]||""}</td>
+            <td class="${desabilitado?'disabled':''}">${r.saidas[0]||""}</td>
+            <td class="${desabilitado?'disabled':''}">${r.entradas[1]||""}</td>
+            <td class="${desabilitado?'disabled':''}">${r.saidas[1]||""}</td>
+            <td>${formatMinutes(r.entradas.reduce((sum,e,i)=>sum + ((r.saidas[i]?toMinutes(r.saidas[i]):toMinutes(e)) - toMinutes(e)),0) - funcionario.jornada*60)}</td>
+            <td><button class="${desabilitado?'disabled':''}">✉️</button></td>
+        `;
+        tbody.appendChild(tr);
+    });
 }
 
-clockInBtn.addEventListener('click',()=>register('Entrada'));
-clockOutBtn.addEventListener('click',()=>register('Saída'));
+// helpers
+function toMinutes(hhmmss){
+    let parts = hhmmss.split(':');
+    return parseInt(parts[0])*60 + parseInt(parts[1]);
+}
 
-document.getElementById('logout-btn').addEventListener('click', ()=>{
-    localStorage.removeItem('loggedUser');
-    window.location = 'index.html';
-});
+function formatMinutes(mins){
+    let h = Math.floor(mins/60);
+    let m = mins%60;
+    return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`;
+}
 
-renderHistory();
+// Inicializa
+atualizarResumo();
+atualizarHistorico();
