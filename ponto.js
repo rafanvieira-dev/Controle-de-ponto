@@ -1,123 +1,143 @@
 // Simulação de funcionário logado
 let funcionario = {
-    nome: "João",
-    jornada: 8, // horas (6, 8 ou 12)
-    registros: [] // cada registro: {data: "2026-02-09", entradas: [], saidas: []}
+    nome: "João Silva",
+    jornada: 8, // 6, 8 ou 12 horas
+    registros: []
 };
 
 // Relógio digital
-const relogio = document.getElementById("relogio");
-setInterval(() => {
-    let now = new Date();
-    relogio.textContent = now.toLocaleTimeString('pt-BR');
-}, 1000);
+function atualizarRelogio() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+    const s = String(now.getSeconds()).padStart(2,'0');
+    document.getElementById("relogio").textContent = `${h}:${m}:${s}`;
+}
+setInterval(atualizarRelogio, 1000);
+atualizarRelogio();
 
-// Botões de ponto
-document.getElementById("entrada").addEventListener("click", () => registrarHora("entrada"));
-document.getElementById("saida").addEventListener("click", () => registrarHora("saida"));
+// Filtros de ano/mês
+const anoSel = document.getElementById("filtro-ano");
+const mesSel = document.getElementById("filtro-mes");
+const hoje = new Date();
+
+for(let y = hoje.getFullYear()-1; y <= hoje.getFullYear(); y++){
+    let opt = document.createElement("option");
+    opt.value = y; opt.text = y; 
+    if(y===hoje.getFullYear()) opt.selected=true;
+    anoSel.appendChild(opt);
+}
+
+for(let m=1; m<=12; m++){
+    let opt = document.createElement("option");
+    opt.value = m; opt.text = m.toString().padStart(2,'0');
+    if(m===hoje.getMonth()+1) opt.selected=true;
+    mesSel.appendChild(opt);
+}
+
+// Registro de ponto
+document.getElementById("entrada").addEventListener("click", ()=>{ if(podeRegistrar()) registrarHora("entrada"); });
+document.getElementById("saida").addEventListener("click", ()=>{ if(podeRegistrar()) registrarHora("saida"); });
+
+function podeRegistrar(){
+    const now = new Date();
+    const dia = now.getDay(); // 0=dom,6=sab
+    if(funcionario.jornada<12 && (dia===0||dia===6)){
+        alert("Final de semana não permitido para sua jornada.");
+        return false;
+    }
+
+    const hojeStr = now.toISOString().split('T')[0];
+    let reg = funcionario.registros.find(r=>r.data===hojeStr);
+    if(reg && (reg.entradas.length+reg.saidas.length >=4)){
+        alert("Limite de 4 registros por dia atingido!");
+        return false;
+    }
+    if(reg && reg.folga){
+        alert("Hoje é folga!");
+        return false;
+    }
+    return true;
+}
 
 function registrarHora(tipo){
-    let hoje = new Date().toISOString().split('T')[0];
-    let registro = funcionario.registros.find(r => r.data === hoje);
-    if(!registro){
-        registro = {data: hoje, entradas: [], saidas: [], folga: false};
-        funcionario.registros.push(registro);
+    const now = new Date();
+    const hojeStr = now.toISOString().split('T')[0];
+    let reg = funcionario.registros.find(r=>r.data===hojeStr);
+    if(!reg){
+        reg = {data: hojeStr, entradas: [], saidas: [], folga:false};
+        funcionario.registros.push(reg);
     }
-
-    // Limite 4 registros
-    if(registro.entradas.length + registro.saidas.length >= 4){
-        alert("Limite de 4 registros por dia atingido!");
-        return;
-    }
-
-    let horaAtual = new Date().toLocaleTimeString('pt-BR');
-    if(tipo === "entrada"){
-        registro.entradas.push(horaAtual);
-    } else {
-        registro.saidas.push(horaAtual);
-    }
-
-    // Se jornada 12h, marca próximo dia como folga automaticamente
-    if(funcionario.jornada === 12 && registro.entradas.length + registro.saidas.length >= 2){
-        let amanha = new Date();
-        amanha.setDate(amanha.getDate()+1);
-        let dataAmanha = amanha.toISOString().split('T')[0];
-        if(!funcionario.registros.find(r => r.data === dataAmanha)){
-            funcionario.registros.push({data: dataAmanha, entradas: [], saidas: [], folga: true});
-        }
-    }
-
-    atualizarResumo();
+    if(tipo==="entrada") reg.entradas.push(now.toLocaleTimeString());
+    else reg.saidas.push(now.toLocaleTimeString());
     atualizarHistorico();
+    atualizarResumo();
 }
 
-function atualizarResumo(){
-    let hoje = new Date().toISOString().split('T')[0];
-    let registro = funcionario.registros.find(r => r.data === hoje);
-    let tempoTrabalhado = 0;
-
-    if(registro){
-        for(let i=0; i<registro.entradas.length; i++){
-            let entrada = toMinutes(registro.entradas[i]);
-            let saida = registro.saidas[i] ? toMinutes(registro.saidas[i]) : entrada;
-            tempoTrabalhado += (saida - entrada);
-        }
-    }
-
-    let saldoDia = tempoTrabalhado - (funcionario.jornada*60);
-    document.getElementById("jornadaDia").textContent = formatMinutes(funcionario.jornada*60);
-    document.getElementById("tempoTrabalhado").textContent = formatMinutes(tempoTrabalhado);
-    document.getElementById("saldoDia").textContent = (saldoDia>=0? "":"-") + formatMinutes(Math.abs(saldoDia));
-
-    // Atualizar saldo mensal e total
-    let saldoMes = funcionario.registros.reduce((acc, r) => {
-        let dia = 0;
-        for(let i=0; i<r.entradas.length; i++){
-            let entrada = toMinutes(r.entradas[i]);
-            let saida = r.saidas[i]? toMinutes(r.saidas[i]) : entrada;
-            dia += (saida-entrada);
-        }
-        return acc+dia;
-    }, 0);
-
-    document.getElementById("saldoMes").querySelector("h2").textContent = formatMinutes(saldoMes);
-    document.getElementById("saldoTotal").querySelector("h2").textContent = (saldoMes<0?"-":"") + formatMinutes(Math.abs(saldoMes));
-}
-
+// Atualiza histórico
 function atualizarHistorico(){
-    let tbody = document.getElementById("historico");
-    tbody.innerHTML = "";
+    const tbody = document.getElementById("historico");
+    tbody.innerHTML="";
     funcionario.registros.forEach(r=>{
-        let tr = document.createElement("tr");
-        let data = new Date(r.data);
-        let diaSemana = data.getDay(); // 0 = Domingo, 6 = Sábado
-        let desabilitado = (funcionario.jornada<12 && (diaSemana===0 || diaSemana===6)) || r.folga;
-
-        tr.innerHTML = `
-            <td>${r.folga ? "Folga" : r.data}</td>
-            <td class="${desabilitado?'disabled':''}">${r.entradas[0]||""}</td>
-            <td class="${desabilitado?'disabled':''}">${r.saidas[0]||""}</td>
-            <td class="${desabilitado?'disabled':''}">${r.entradas[1]||""}</td>
-            <td class="${desabilitado?'disabled':''}">${r.saidas[1]||""}</td>
-            <td>${formatMinutes(r.entradas.reduce((sum,e,i)=>sum + ((r.saidas[i]?toMinutes(r.saidas[i]):toMinutes(e)) - toMinutes(e)),0) - funcionario.jornada*60)}</td>
-            <td><button class="${desabilitado?'disabled':''}">✉️</button></td>
-        `;
+        const tr = document.createElement("tr");
+        const entradas = r.entradas.join(" | ");
+        const saidas = r.saidas.join(" | ");
+        const saldo = calcularSaldo(r);
+        tr.innerHTML = `<td>${r.data}</td>
+                        <td>${entradas}</td>
+                        <td>${saidas}</td>
+                        <td>${saldo}</td>
+                        <td><span title="Justificativa">✉️</span></td>`;
         tbody.appendChild(tr);
     });
 }
 
-// helpers
-function toMinutes(hhmmss){
-    let parts = hhmmss.split(':');
-    return parseInt(parts[0])*60 + parseInt(parts[1]);
+// Calcula saldo do dia
+function calcularSaldo(reg){
+    let totalMs = 0;
+    for(let i=0;i<Math.min(reg.entradas.length, reg.saidas.length); i++){
+        const ent = new Date(`1970-01-01T${reg.entradas[i]}`);
+        const sai = new Date(`1970-01-01T${reg.saidas[i]}`);
+        totalMs += sai - ent;
+    }
+    const hPrev = funcionario.jornada;
+    const saldoH = totalMs/1000/60/60 - hPrev;
+    return saldoH.toFixed(2)+"h";
 }
 
-function formatMinutes(mins){
-    let h = Math.floor(mins/60);
-    let m = mins%60;
-    return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`;
-}
+// Atualiza resumo do dia e saldos
+function atualizarResumo(){
+    const hojeStr = hoje.toISOString().split('T')[0];
+    const reg = funcionario.registros.find(r=>r.data===hojeStr);
+    const jornada = funcionario.jornada.toString().padStart(2,'0')+":00";
+    document.getElementById("jornada-prevista").textContent = jornada;
+    if(reg){
+        let totalMs = 0;
+        for(let i=0;i<Math.min(reg.entradas.length, reg.saidas.length); i++){
+            const ent = new Date(`1970-01-01T${reg.entradas[i]}`);
+            const sai = new Date(`1970-01-01T${reg.saidas[i]}`);
+            totalMs += sai - ent;
+        }
+        const horas = Math.floor(totalMs/1000/60/60);
+        const mins = Math.floor((totalMs/1000/60)%60);
+        document.getElementById("tempo-trabalhado").textContent = `${horas.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}`;
+        const saldoH = totalMs/1000/60/60 - funcionario.jornada;
+        document.getElementById("saldo-dia").textContent = saldoH.toFixed(2)+"h";
+    } else {
+        document.getElementById("tempo-trabalhado").textContent = "00:00";
+        document.getElementById("saldo-dia").textContent = "0h";
+    }
 
-// Inicializa
-atualizarResumo();
-atualizarHistorico();
+    // Saldos geral
+    let totalMes = 0;
+    funcionario.registros.forEach(r=>{
+        for(let i=0;i<Math.min(r.entradas.length, r.saidas.length); i++){
+            const ent = new Date(`1970-01-01T${r.entradas[i]}`);
+            const sai = new Date(`1970-01-01T${r.saidas[i]}`);
+            totalMes += sai - ent;
+        }
+    });
+    const saldoMes = totalMes/1000/60/60 - funcionario.jornada*funcionario.registros.length;
+    document.getElementById("saldo-mes").textContent = saldoMes.toFixed(2)+"h";
+    document.getElementById("saldo-total").textContent = saldoMes.toFixed(2)+"h";
+}
