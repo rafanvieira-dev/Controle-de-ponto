@@ -1,115 +1,83 @@
-const usuario = JSON.parse(localStorage.getItem('usuarioAtual'));
-if(!usuario || usuario.admin) window.location.href = "index.html";
+const user = JSON.parse(localStorage.getItem('loggedUser'));
+if (!user) window.location.href = 'index.html';
 
-document.getElementById('usuario').innerText = `Funcionário: ${usuario.nome}`;
+document.getElementById('user-name').textContent = user.name;
 
-// Botão sair
-document.getElementById('btnSair').addEventListener('click', ()=>{
-  localStorage.removeItem('usuarioAtual');
-  window.location.href = "index.html";
-});
+const clockInBtn = document.getElementById('clock-in-btn');
+const clockOutBtn = document.getElementById('clock-out-btn');
+const logoutBtn = document.getElementById('logout-btn');
 
-// Relógio
-function atualizarRelogio() {
-  const agora = new Date();
-  document.getElementById('relogio').innerText = agora.toLocaleTimeString();
-}
-setInterval(atualizarRelogio, 1000);
-atualizarRelogio();
+const currentTime = document.getElementById('current-time');
+const currentDate = document.getElementById('current-date');
+const workedHours = document.getElementById('worked-hours');
+const dailyBalance = document.getElementById('daily-balance');
+const historyTable = document.getElementById('history-table');
+const workdayHours = document.getElementById('workday-hours');
 
-// Criar semana
-const dias = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
-const tabela = document.getElementById('calendario');
+let pontos = user.pontos || [];
+const WORKDAY_MS = 12*60*60*1000; // 12h descontando 1h almoço
 
-// Recupera dados salvos
-let pontoSalvo = JSON.parse(localStorage.getItem('ponto_' + usuario.nome)) || {};
-
-// Criar linhas
-dias.forEach(dia => {
-  const tr = document.createElement('tr');
-  tr.innerHTML = `
-    <td>${dia}</td>
-    <td class="entrada">${pontoSalvo[dia]?.entrada||''}</td>
-    <td class="inicioAlmoco">${pontoSalvo[dia]?.inicioAlmoco||''}</td>
-    <td class="fimAlmoco">${pontoSalvo[dia]?.fimAlmoco||''}</td>
-    <td class="saida">${pontoSalvo[dia]?.saida||''}</td>
-    <td class="total">0h</td>
-  `;
-  tabela.appendChild(tr);
-});
-
-// Função hora atual hh:mm
-function horaAtual(){
-  const agora = new Date();
-  return agora.toTimeString().slice(0,5);
+function updateClock() {
+    const now = new Date();
+    currentTime.textContent = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute:'2-digit', second:'2-digit'});
+    currentDate.textContent = now.toLocaleDateString('pt-BR', { weekday:'long', day:'2-digit', month:'long', year:'numeric'});
+    setTimeout(updateClock, 1000);
 }
 
-// Função calcular horas desconsiderando 1h almoço
-function calcularHoras(){
-  const linhas = tabela.querySelectorAll('tr');
-  let pontoAtual = {};
+function savePonto(type) {
+    const now = new Date();
+    pontos.push({ type, time: now.getTime() });
+    user.pontos = pontos;
+    updateUserStorage();
+    renderHistory();
+}
 
-  linhas.forEach((linha, i)=>{
-    if(i===0) return;
-    const dia = dias[i-1];
-    const entrada = linha.querySelector('.entrada').innerText;
-    const inicioAlmoco = linha.querySelector('.inicioAlmoco').innerText;
-    const fimAlmoco = linha.querySelector('.fimAlmoco').innerText;
-    const saida = linha.querySelector('.saida').innerText;
+function updateUserStorage() {
+    let users = JSON.parse(localStorage.getItem('funcionarios') || '[]');
+    users = users.map(u => u.email === user.email ? user : u);
+    localStorage.setItem('funcionarios', JSON.stringify(users));
+}
 
-    pontoAtual[dia] = {entrada, inicioAlmoco, fimAlmoco, saida};
+function renderHistory() {
+    const today = new Date().toLocaleDateString('pt-BR');
+    const todayPoints = pontos.filter(p => new Date(p.time).toLocaleDateString('pt-BR') === today);
+    historyTable.innerHTML = '';
+    let totalMs = 0;
 
-    const td = linha.querySelector('.total');
+    for (let i = 0; i < todayPoints.length; i++) {
+        const p = todayPoints[i];
+        const tr = document.createElement('tr');
+        const time = new Date(p.time).toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+        tr.innerHTML = `<td>${time}</td><td>${p.type === 'in' ? 'Entrada' : 'Saída'}</td>`;
+        historyTable.appendChild(tr);
 
-    if(entrada && inicioAlmoco && fimAlmoco && saida){
-      const e = new Date(`1970-01-01T${entrada}:00`);
-      const s = new Date(`1970-01-01T${saida}:00`);
-
-      let total = (s - e)/3600000 - 1; // desconta 1h almoço
-      total = total.toFixed(2);
-
-      const diff = total - usuario.horasDia;
-      td.innerText = `${diff >=0 ? '+' : ''}${diff}h`;
-
-      td.classList.remove('positivo','negativo','neutro');
-      if(diff>0) td.classList.add('positivo');
-      else if(diff<0) td.classList.add('negativo');
-      else td.classList.add('neutro');
-    } else {
-      td.innerText = '0h';
-      td.classList.remove('positivo','negativo','neutro');
-      td.classList.add('neutro');
+        if (i % 2 === 1 && todayPoints[i-1].type==='in' && p.type==='out') {
+            totalMs += p.time - todayPoints[i-1].time;
+        }
     }
-  });
 
-  localStorage.setItem('ponto_' + usuario.nome, JSON.stringify(pontoAtual));
+    if (todayPoints.length >= 4) totalMs -= 60*60*1000;
+
+    workedHours.textContent = formatTime(totalMs);
+    const balanceMs = totalMs - WORKDAY_MS;
+    dailyBalance.textContent = formatTime(balanceMs);
+    dailyBalance.style.color = balanceMs >=0 ? 'green' : 'red';
 }
 
-// Botão único sequencial
-document.getElementById('btnPonto').addEventListener('click', ()=>{
-  const hoje = new Date().getDay();
-  const linha = tabela.querySelectorAll('tr')[hoje+1];
-  if(!linha) return;
+function formatTime(ms){
+    const s = ms < 0 ? '-' : '';
+    ms = Math.abs(ms);
+    const h = Math.floor(ms/3600000);
+    const m = Math.floor((ms%3600000)/60000);
+    return `${s}${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+}
 
-  const entrada = linha.querySelector('.entrada').innerText;
-  const inicioAlmoco = linha.querySelector('.inicioAlmoco').innerText;
-  const fimAlmoco = linha.querySelector('.fimAlmoco').innerText;
-  const saida = linha.querySelector('.saida').innerText;
-
-  if(!entrada){
-    linha.querySelector('.entrada').innerText = horaAtual();
-  } else if(!inicioAlmoco){
-    linha.querySelector('.inicioAlmoco').innerText = horaAtual();
-  } else if(!fimAlmoco){
-    linha.querySelector('.fimAlmoco').innerText = horaAtual();
-  } else if(!saida){
-    linha.querySelector('.saida').innerText = horaAtual();
-  } else {
-    alert("Todos os pontos de hoje já foram registrados!");
-  }
-
-  calcularHoras();
+clockInBtn.addEventListener('click', ()=>savePonto('in'));
+clockOutBtn.addEventListener('click', ()=>savePonto('out'));
+logoutBtn.addEventListener('click', ()=>{
+    localStorage.removeItem('loggedUser');
+    window.location.href = 'index.html';
 });
 
-// Calcula ao carregar
-calcularHoras();
+updateClock();
+renderHistory();
