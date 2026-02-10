@@ -1,176 +1,68 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
 body {
-    font-family: 'Inter', sans-serif;
-    background: #f3f4f6;
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    color: #333;
     margin: 0;
-    color: #111827;
+    padding: 0;
 }
 
 .container {
-    max-width: 960px;
-    margin: auto;
-    padding: 2rem;
+    max-width: 600px;
+    margin: 50px auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
 }
 
-/* Inputs */
-.input {
+h1, h2 {
+    text-align: center;
+}
+
+input {
+    display: block;
     width: 100%;
-    padding: 0.6rem 0.75rem;
-    border: 1px solid #d1d5db;
-    border-radius: 0.5rem;
-    outline: none;
-    margin-bottom: 1rem;
-    transition: border-color 0.2s, box-shadow 0.2s;
-}
-.input:focus {
-    border-color: #10b981;
-    box-shadow: 0 0 0 2px rgba(16,185,129,0.2);
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
 }
 
-/* Buttons */
-.btn-primary {
-    background-color: #10b981;
-    color: white;
-    padding: 0.6rem 1rem;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    transition: background-color 0.2s, transform 0.1s;
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    margin: 5px;
     cursor: pointer;
 }
-.btn-primary:hover {
-    background-color: #059669;
-    transform: translateY(-1px);
+
+button#clock-in-btn {
+    background-color: #4CAF50;
+    color: #fff;
 }
 
-.btn-danger {
-    background-color: #ef4444;
-    color: white;
-    padding: 0.6rem 1rem;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    transition: background-color 0.2s, transform 0.1s;
-    cursor: pointer;
-}
-.btn-danger:hover {
-    background-color: #dc2626;
-    transform: translateY(-1px);
+button#clock-out-btn {
+    background-color: #f44336;
+    color: #fff;
 }
 
-.btn-secondary {
-    background-color: #f3f4f6;
-    color: #374151;
-    padding: 0.6rem 1rem;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    transition: background-color 0.2s, transform 0.1s;
-    cursor: pointer;
-}
-.btn-secondary:hover {
-    background-color: #e5e7eb;
-    transform: translateY(-1px);
+button#logout-btn {
+    background-color: #555;
+    color: #fff;
 }
 
-/* Cards */
-.card {
-    background: white;
-    border-radius: 0.75rem;
-    padding: 1.2rem;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    transition: transform 0.1s, box-shadow 0.2s;
-}
-.card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-}
-.card h3 {
-    font-size: 0.9rem;
-    color: #6b7280;
-    margin: 0;
-}
-.card p {
-    font-size: 1.8rem;
-    font-weight: 700;
-    margin: 0.4rem 0 0;
-}
-
-/* Tables */
 table {
     width: 100%;
     border-collapse: collapse;
-    border-radius: 0.75rem;
-    overflow: hidden;
-    background: white;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-}
-thead th {
-    background: #f3f4f6;
-    padding: 0.75rem;
-    text-align: left;
-    font-weight: 600;
-}
-tbody td {
-    padding: 0.6rem 0.75rem;
-    border-bottom: 1px solid #e5e7eb;
-}
-tbody tr:last-child td {
-    border-bottom: none;
+    margin-top: 10px;
 }
 
-/* Header */
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
+th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
 }
-
-h1 {
-    font-size: 1.5rem;
-    font-weight: 700;
-}
-
-#current-time {
-    font-size: 3rem;
-    font-weight: 700;
-    color: #111827;
-    margin: 0.5rem 0;
-}
-
-#current-date {
-    font-size: 1rem;
-    color: #6b7280;
-    margin-bottom: 1rem;
-}
-
-/* Layout */
-.dashboard {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1rem;
-    margin-bottom: 2rem;
-}
-
 .flex {
     display: flex;
-    gap: 1rem;
-}
-
-/* Forms */
-form {
-    background: white;
-    padding: 2rem;
-    border-radius: 0.75rem;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-}
-
-/* Responsive */
-@media(max-width:640px){
-    #current-time { font-size: 2.2rem; }
-    .dashboard { grid-template-columns: 1fr; }
-    .flex { flex-direction: column; }
+    justify-content: space-between;
 }
