@@ -30,16 +30,29 @@ input, button {
 }
 
 button {
-  width: 50%;
-  background-color: #2575fc;
-  color: #fff;
   border: none;
   cursor: pointer;
-  transition: background 0.3s;
+  font-size: 16px;
+  color: #fff;
+  border-radius: 8px;
+  padding: 10px;
+  transition: 0.3s;
 }
 
-button:hover {
+#btnPonto {
+  background-color: #2575fc;
+}
+
+#btnPonto:hover {
   background-color: #6a11cb;
+}
+
+#btnSair {
+  background-color: #ff4b5c;
+}
+
+#btnSair:hover {
+  background-color: #ff1f3a;
 }
 
 #relogio {
@@ -81,8 +94,11 @@ tr:hover {
   background-color: #f1f1f1;
 }
 
-input[type="time"] {
-  padding: 5px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+td.total {
+  font-weight: bold;
+  font-size: 1.1em;
 }
+
+td.total.positivo { color: #2ecc71; } /* verde */
+td.total.negativo { color: #e74c3c; } /* vermelho */
+td.total.neutro { color: #3498db; }    /* azul */
