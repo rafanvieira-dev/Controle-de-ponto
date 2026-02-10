@@ -3,30 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ponto - Ponto Eletrônico</title>
-<link rel="stylesheet" href="style.css">
+<title>Ponto - Controle de Ponto</title>
+<link href="style.css" rel="stylesheet">
+<script defer src="ponto.js"></script>
 </head>
-<body>
-  <h1>Ponto Eletrônico</h1>
-  <div id="relogio"></div>
-  <div id="usuario"></div>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center p-6">
+    <header class="w-full max-w-4xl flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Olá, <span id="user-name"></span></h1>
+        <button id="logout-btn" class="btn-secondary">Sair</button>
+    </header>
 
-  <table id="calendario">
-    <tr>
-      <th>Dia</th>
-      <th>Entrada</th>
-      <th>Início Almoço</th>
-      <th>Fim Almoço</th>
-      <th>Saída</th>
-      <th>Total</th>
-    </tr>
-  </table>
+    <div class="w-full max-w-4xl bg-white p-6 rounded-xl shadow-md">
+        <p class="text-center text-gray-700 mb-4 text-xl" id="current-date"></p>
+        <p class="text-center text-4xl font-bold mb-6" id="current-time"></p>
+        
+        <div class="flex justify-center gap-4 mb-6">
+            <button id="clock-in-btn" class="btn-primary w-40">Registrar Entrada</button>
+            <button id="clock-out-btn" class="btn-danger w-40">Registrar Saída</button>
+        </div>
 
-  <div style="text-align:center; margin:20px;">
-    <button id="btnPonto">Registrar Ponto</button>
-    <button id="btnSair" style="margin-left:15px;">Sair</button>
-  </div>
+        <div class="grid grid-cols-3 gap-4 text-center mb-6">
+            <div class="bg-gray-50 p-4 rounded-lg shadow"><p class="text-gray-500">Jornada</p><p id="workday-hours" class="font-bold text-lg">08:00</p></div>
+            <div class="bg-gray-50 p-4 rounded-lg shadow"><p class="text-gray-500">Trabalhado</p><p id="worked-hours" class="font-bold text-lg">00:00</p></div>
+            <div class="bg-gray-50 p-4 rounded-lg shadow"><p class="text-gray-500">Saldo</p><p id="daily-balance" class="font-bold text-lg">--:--</p></div>
+        </div>
 
-<script src="ponto.js"></script>
+        <div>
+            <h2 class="text-lg font-bold mb-2">Histórico do Dia</h2>
+            <table class="min-w-full bg-white rounded-xl shadow overflow-hidden">
+                <thead class="bg-gray-100 text-left">
+                    <tr>
+                        <th class="px-4 py-2">Horário</th>
+                        <th class="px-4 py-2">Tipo</th>
+                    </tr>
+                </thead>
+                <tbody id="history-table">
+                    <!-- Preenchido por JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
 </body>
 </html>
