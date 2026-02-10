@@ -4,6 +4,13 @@ body {
     font-family: 'Inter', sans-serif;
     background: #f3f4f6;
     margin: 0;
+    color: #111827;
+}
+
+.container {
+    max-width: 960px;
+    margin: auto;
+    padding: 2rem;
 }
 
 /* Inputs */
@@ -13,6 +20,7 @@ body {
     border: 1px solid #d1d5db;
     border-radius: 0.5rem;
     outline: none;
+    margin-bottom: 1rem;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 .input:focus {
@@ -28,6 +36,7 @@ body {
     border-radius: 0.5rem;
     font-weight: 600;
     transition: background-color 0.2s, transform 0.1s;
+    cursor: pointer;
 }
 .btn-primary:hover {
     background-color: #059669;
@@ -41,6 +50,7 @@ body {
     border-radius: 0.5rem;
     font-weight: 600;
     transition: background-color 0.2s, transform 0.1s;
+    cursor: pointer;
 }
 .btn-danger:hover {
     background-color: #dc2626;
@@ -54,6 +64,7 @@ body {
     border-radius: 0.5rem;
     font-weight: 600;
     transition: background-color 0.2s, transform 0.1s;
+    cursor: pointer;
 }
 .btn-secondary:hover {
     background-color: #e5e7eb;
@@ -87,7 +98,7 @@ body {
     margin: 0.4rem 0 0;
 }
 
-/* Table */
+/* Tables */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -110,19 +121,17 @@ tbody tr:last-child td {
     border-bottom: none;
 }
 
-/* Dashboard layout */
-.dashboard {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1rem;
-    margin-bottom: 2rem;
-}
-
+/* Header */
 header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
+}
+
+h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
 }
 
 #current-time {
@@ -138,8 +147,30 @@ header {
     margin-bottom: 1rem;
 }
 
+/* Layout */
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.flex {
+    display: flex;
+    gap: 1rem;
+}
+
+/* Forms */
+form {
+    background: white;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
 /* Responsive */
 @media(max-width:640px){
     #current-time { font-size: 2.2rem; }
     .dashboard { grid-template-columns: 1fr; }
+    .flex { flex-direction: column; }
 }
