@@ -3,22 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin - Cadastro</title>
-<link href="style.css" rel="stylesheet">
+<title>Admin - Cadastro de Funcionários</title>
+<link rel="stylesheet" href="style.css">
 <script defer src="app.js"></script>
 </head>
-<body class="bg-gray-100 min-h-screen p-6">
-    <div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg">
-        <h1 class="text-2xl font-bold text-gray-800 mb-6">Cadastro de Funcionário</h1>
-        <form id="register-form" class="space-y-4">
-            <input type="text" id="name" placeholder="Nome completo" class="input">
-            <input type="email" id="register-email" placeholder="E-mail" class="input">
-            <input type="password" id="register-password" placeholder="Senha" class="input">
-            <button type="submit" class="btn-primary">Cadastrar</button>
-        </form>
-        <p id="register-msg" class="mt-4 text-center text-sm"></p>
+<body>
+<div class="container">
+<header>
+    <h1>Admin</h1>
+    <button id="logout-btn" class="btn-secondary">Sair</button>
+</header>
 
-        <button id="back-btn" class="btn-secondary mt-6">Voltar</button>
-    </div>
+<form id="register-form">
+    <input type="text" id="new-username" class="input" placeholder="Nome do funcionário" required>
+    <input type="password" id="new-password" class="input" placeholder="Senha" required>
+    <button type="submit" class="btn-primary">Cadastrar Funcionário</button>
+</form>
+
+<h2>Funcionários Cadastrados</h2>
+<table>
+    <thead>
+        <tr><th>Usuário</th></tr>
+    </thead>
+    <tbody id="employees-table"></tbody>
+</table>
+</div>
 </body>
 </html>
