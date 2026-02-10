@@ -4,18 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login - Controle de Ponto</title>
-<link href="style.css" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 <script defer src="app.js"></script>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
-        <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Controle de Ponto</h1>
-        <form id="login-form" class="space-y-4">
-            <input type="text" id="email" placeholder="E-mail" class="input">
-            <input type="password" id="password" placeholder="Senha" class="input">
-            <p id="login-error" class="text-red-600 text-sm"></p>
-            <button type="submit" class="btn-primary w-full">Entrar</button>
-        </form>
-    </div>
+<body>
+
+<div class="container">
+    <h1>Login</h1>
+    <form id="login-form">
+        <input type="text" id="username" class="input" placeholder="Usuário" required>
+        <input type="password" id="password" class="input" placeholder="Senha" required>
+        <button type="submit" class="btn-primary w-full">Entrar</button>
+    </form>
+</div>
+
 </body>
 </html>
