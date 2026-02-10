@@ -1,47 +1,68 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Ponto - Controle de Ponto</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Ponto Eletrônico</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
-    <header>
-        <h1>Bem-vindo, <span id="user-name"></span></h1>
-        <button id="logout-btn">Sair</button>
-    </header>
 
-    <div id="current-date"></div>
-    <div id="current-time"></div>
-
-    <div class="week-days" id="week-days">
-        <button data-day="0">Dom</button>
-        <button data-day="1">Seg</button>
-        <button data-day="2">Ter</button>
-        <button data-day="3">Qua</button>
-        <button data-day="4">Qui</button>
-        <button data-day="5">Sex</button>
-        <button data-day="6">Sáb</button>
-    </div>
-
-    <div class="flex">
-        <button id="clock-in-btn">Registrar Entrada</button>
-        <button id="clock-out-btn">Registrar Saída</button>
-    </div>
-
-    <h2>Resumo Diário</h2>
-    <p>Horas trabalhadas: <span id="worked-hours">0</span>h</p>
-    <p>Saldo da jornada: <span id="balance-hours">0</span>h</p>
-
-    <h2>Histórico</h2>
-    <table>
-        <thead>
-            <tr><th>Horário</th><th>Tipo</th></tr>
-        </thead>
-        <tbody id="history-table"></tbody>
-    </table>
+<div class="indicadores">
+  <div class="indicador" id="saldoMes">
+    <h2>00:00</h2>
+    <p>Saldo do Mês</p>
+  </div>
+  <div class="indicador negative" id="saldoTotal">
+    <h2>00:00</h2>
+    <p>Saldo Total</p>
+  </div>
 </div>
+
+<div class="topo-dashboard">
+  <div class="relogio-card">
+    <h1 id="relogio">00:00:00</h1>
+    <button id="entrada">Entrada</button>
+    <button id="saida">Saída</button>
+  </div>
+
+  <div class="resumo-dia">
+    <div>
+      <h3>Jornada Prevista</h3>
+      <p id="jornadaDia">00:00</p>
+    </div>
+    <div>
+      <h3>Tempo Trabalhado</h3>
+      <p id="tempoTrabalhado">00:00</p>
+    </div>
+    <div>
+      <h3>Saldo Diário</h3>
+      <p id="saldoDia">00:00</p>
+    </div>
+  </div>
+</div>
+
+<div class="filtros">
+  <select id="anoFiltro"></select>
+  <select id="mesFiltro"></select>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Data</th>
+      <th>Entrada 1</th>
+      <th>Saída 1</th>
+      <th>Entrada 2</th>
+      <th>Saída 2</th>
+      <th>Saldo</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody id="historico">
+    <!-- registros populados pelo JS -->
+  </tbody>
+</table>
+
 <script src="ponto.js"></script>
 </body>
 </html>
