@@ -1,6 +1,6 @@
 // Inicializa usuários
 let users = JSON.parse(localStorage.getItem('users')) || [
-    {username:'admin', password:'admin', role:'admin', workHours:8, history:[]}
+    {username:'admin', password:'12345678', role:'admin', workHours:8, history:[]}
 ];
 localStorage.setItem('users', JSON.stringify(users));
 
