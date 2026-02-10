@@ -1,68 +1,81 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Ponto Eletrônico</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ponto Eletrônico</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="container">
+        <h1>Ponto Eletrônico</h1>
 
-<div class="indicadores">
-  <div class="indicador" id="saldoMes">
-    <h2>00:00</h2>
-    <p>Saldo do Mês</p>
-  </div>
-  <div class="indicador negative" id="saldoTotal">
-    <h2>00:00</h2>
-    <p>Saldo Total</p>
-  </div>
-</div>
+        <!-- Indicadores -->
+        <div class="indicadores">
+            <div class="card">
+                <h3>Saldo do Mês</h3>
+                <p id="saldo-mes">00:00</p>
+            </div>
+            <div class="card destaque">
+                <h3>Saldo Total</h3>
+                <p id="saldo-total">00:00</p>
+            </div>
+        </div>
 
-<div class="topo-dashboard">
-  <div class="relogio-card">
-    <h1 id="relogio">00:00:00</h1>
-    <button id="entrada">Entrada</button>
-    <button id="saida">Saída</button>
-  </div>
+        <!-- Relógio e Resumo do Dia -->
+        <div class="painel-superior">
+            <div class="relogio-card">
+                <h2 id="relogio">00:00:00</h2>
+                <button id="entrada">Registrar Entrada</button>
+                <button id="saida">Registrar Saída</button>
+            </div>
 
-  <div class="resumo-dia">
-    <div>
-      <h3>Jornada Prevista</h3>
-      <p id="jornadaDia">00:00</p>
+            <div class="resumo-card">
+                <h3>Resumo do Dia</h3>
+                <div class="resumo-colunas">
+                    <div>
+                        <strong>Jornada Prevista:</strong>
+                        <p id="jornada-prevista">00:00</p>
+                    </div>
+                    <div>
+                        <strong>Tempo Trabalhado:</strong>
+                        <p id="tempo-trabalhado">00:00</p>
+                    </div>
+                    <div>
+                        <strong>Saldo Diário:</strong>
+                        <p id="saldo-dia">00:00</p>
+                    </div>
+                </div>
+
+                <div class="filtros">
+                    <label>Ano:
+                        <select id="filtro-ano"></select>
+                    </label>
+                    <label>Mês:
+                        <select id="filtro-mes"></select>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Histórico -->
+        <div class="historico-card">
+            <h3>Histórico de Registros</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Entradas</th>
+                        <th>Saídas</th>
+                        <th>Saldo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="historico"></tbody>
+            </table>
+        </div>
     </div>
-    <div>
-      <h3>Tempo Trabalhado</h3>
-      <p id="tempoTrabalhado">00:00</p>
-    </div>
-    <div>
-      <h3>Saldo Diário</h3>
-      <p id="saldoDia">00:00</p>
-    </div>
-  </div>
-</div>
 
-<div class="filtros">
-  <select id="anoFiltro"></select>
-  <select id="mesFiltro"></select>
-</div>
-
-<table>
-  <thead>
-    <tr>
-      <th>Data</th>
-      <th>Entrada 1</th>
-      <th>Saída 1</th>
-      <th>Entrada 2</th>
-      <th>Saída 2</th>
-      <th>Saldo</th>
-      <th>Ações</th>
-    </tr>
-  </thead>
-  <tbody id="historico">
-    <!-- registros populados pelo JS -->
-  </tbody>
-</table>
-
-<script src="ponto.js"></script>
+    <script src="ponto.js"></script>
 </body>
 </html>
