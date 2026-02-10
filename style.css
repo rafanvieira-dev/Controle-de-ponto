@@ -1,19 +1,46 @@
-/* Apenas fonte principal e ajustes globais */
-body {
-  font-family: 'Inter', sans-serif;
-  background-color: #f3f4f6; /* Tailwind gray-100 */
-  margin: 0;
-  padding: 0;
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-button:focus {
-  outline: none;
-}
+body { font-family: 'Inter', sans-serif; }
 
-table {
-  border-collapse: collapse;
+.input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    outline: none;
+    transition: border-color 0.2s;
 }
+.input:focus { border-color: #10b981; }
 
-td, th {
-  white-space: nowrap;
+.btn-primary {
+    background-color: #10b981;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: background-color 0.2s;
 }
+.btn-primary:hover { background-color: #059669; }
+
+.btn-danger {
+    background-color: #ef4444;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+.btn-danger:hover { background-color: #dc2626; }
+
+.btn-secondary {
+    background-color: #f3f4f6;
+    color: #374151;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+.btn-secondary:hover { background-color: #e5e7eb; }
+
+table th, table td { padding: 0.5rem; }
+table th { font-weight: 600; }
