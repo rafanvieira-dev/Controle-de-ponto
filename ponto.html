@@ -3,45 +3,53 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ponto - Controle de Ponto</title>
+<title>Ponto - Dashboard</title>
 <link href="style.css" rel="stylesheet">
 <script defer src="ponto.js"></script>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center p-6">
-    <header class="w-full max-w-4xl flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Olá, <span id="user-name"></span></h1>
-        <button id="logout-btn" class="btn-secondary">Sair</button>
-    </header>
+<body class="p-6">
 
-    <div class="w-full max-w-4xl bg-white p-6 rounded-xl shadow-md">
-        <p class="text-center text-gray-700 mb-4 text-xl" id="current-date"></p>
-        <p class="text-center text-4xl font-bold mb-6" id="current-time"></p>
-        
-        <div class="flex justify-center gap-4 mb-6">
-            <button id="clock-in-btn" class="btn-primary w-40">Registrar Entrada</button>
-            <button id="clock-out-btn" class="btn-danger w-40">Registrar Saída</button>
-        </div>
+<header>
+    <h1>Olá, <span id="user-name"></span></h1>
+    <button id="logout-btn" class="btn-secondary">Sair</button>
+</header>
 
-        <div class="grid grid-cols-3 gap-4 text-center mb-6">
-            <div class="bg-gray-50 p-4 rounded-lg shadow"><p class="text-gray-500">Jornada</p><p id="workday-hours" class="font-bold text-lg">08:00</p></div>
-            <div class="bg-gray-50 p-4 rounded-lg shadow"><p class="text-gray-500">Trabalhado</p><p id="worked-hours" class="font-bold text-lg">00:00</p></div>
-            <div class="bg-gray-50 p-4 rounded-lg shadow"><p class="text-gray-500">Saldo</p><p id="daily-balance" class="font-bold text-lg">--:--</p></div>
-        </div>
+<div id="current-date"></div>
+<div id="current-time"></div>
 
-        <div>
-            <h2 class="text-lg font-bold mb-2">Histórico do Dia</h2>
-            <table class="min-w-full bg-white rounded-xl shadow overflow-hidden">
-                <thead class="bg-gray-100 text-left">
-                    <tr>
-                        <th class="px-4 py-2">Horário</th>
-                        <th class="px-4 py-2">Tipo</th>
-                    </tr>
-                </thead>
-                <tbody id="history-table">
-                    <!-- Preenchido por JS -->
-                </tbody>
-            </table>
-        </div>
+<div class="dashboard">
+    <div class="card">
+        <h3>Jornada</h3>
+        <p id="workday-hours">08:00</p>
     </div>
+    <div class="card">
+        <h3>Trabalhado</h3>
+        <p id="worked-hours">00:00</p>
+    </div>
+    <div class="card">
+        <h3>Saldo</h3>
+        <p id="daily-balance">--:--</p>
+    </div>
+</div>
+
+<div class="flex gap-4 mb-6">
+    <button id="clock-in-btn" class="btn-primary w-full">Registrar Entrada</button>
+    <button id="clock-out-btn" class="btn-danger w-full">Registrar Saída</button>
+</div>
+
+<div>
+    <h2>Histórico do Dia</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Horário</th>
+                <th>Tipo</th>
+            </tr>
+        </thead>
+        <tbody id="history-table">
+        </tbody>
+    </table>
+</div>
+
 </body>
 </html>
