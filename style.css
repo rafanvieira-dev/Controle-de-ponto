@@ -1,104 +1,19 @@
+/* Apenas fonte principal e ajustes globais */
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
-  color: #333;
+  font-family: 'Inter', sans-serif;
+  background-color: #f3f4f6; /* Tailwind gray-100 */
   margin: 0;
   padding: 0;
 }
 
-h1, h2 {
-  text-align: center;
-  color: #fff;
-}
-
-.login-container {
-  max-width: 400px;
-  margin: 50px auto;
-  background-color: rgba(255,255,255,0.95);
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-}
-
-input, button {
-  width: 80%;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 16px;
-}
-
-button {
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  color: #fff;
-  border-radius: 8px;
-  padding: 10px;
-  transition: 0.3s;
-}
-
-#btnPonto {
-  background-color: #2575fc;
-}
-
-#btnPonto:hover {
-  background-color: #6a11cb;
-}
-
-#btnSair {
-  background-color: #ff4b5c;
-}
-
-#btnSair:hover {
-  background-color: #ff1f3a;
-}
-
-#relogio {
-  font-size: 2em;
-  text-align: center;
-  margin: 20px 0;
-  color: #fff;
-}
-
-#usuario {
-  text-align: center;
-  font-size: 1.2em;
-  margin-bottom: 20px;
-  color: #fff;
+button:focus {
+  outline: none;
 }
 
 table {
-  width: 90%;
-  margin: 0 auto 40px;
   border-collapse: collapse;
-  background-color: rgba(255,255,255,0.95);
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
-th, td {
-  padding: 12px;
-  text-align: center;
-  border-bottom: 1px solid #ddd;
+td, th {
+  white-space: nowrap;
 }
-
-th {
-  background-color: #2575fc;
-  color: white;
-}
-
-tr:hover {
-  background-color: #f1f1f1;
-}
-
-td.total {
-  font-weight: bold;
-  font-size: 1.1em;
-}
-
-td.total.positivo { color: #2ecc71; } /* verde */
-td.total.negativo { color: #e74c3c; } /* vermelho */
-td.total.neutro { color: #3498db; }    /* azul */
