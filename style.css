@@ -1,0 +1,88 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2 {
+  text-align: center;
+  color: #fff;
+}
+
+.login-container {
+  max-width: 400px;
+  margin: 50px auto;
+  background-color: rgba(255,255,255,0.95);
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+input, button {
+  width: 80%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+
+button {
+  width: 50%;
+  background-color: #2575fc;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background-color: #6a11cb;
+}
+
+#relogio {
+  font-size: 2em;
+  text-align: center;
+  margin: 20px 0;
+  color: #fff;
+}
+
+#usuario {
+  text-align: center;
+  font-size: 1.2em;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+table {
+  width: 90%;
+  margin: 0 auto 40px;
+  border-collapse: collapse;
+  background-color: rgba(255,255,255,0.95);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+th, td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #2575fc;
+  color: white;
+}
+
+tr:hover {
+  background-color: #f1f1f1;
+}
+
+input[type="time"] {
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
