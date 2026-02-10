@@ -1,32 +1,25 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin - Cadastro de Funcionários</title>
-<link rel="stylesheet" href="style.css">
-<script defer src="app.js"></script>
+    <meta charset="UTF-8">
+    <title>Admin - Cadastro de Funcionários</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="container">
-<header>
-    <h1>Admin</h1>
-    <button id="logout-btn" class="btn-secondary">Sair</button>
-</header>
+    <h1>Cadastro de Funcionários</h1>
+    <form id="register-form">
+        <input type="text" id="new-username" placeholder="Nome do funcionário" required>
+        <input type="password" id="new-password" placeholder="Senha" required>
+        <input type="number" id="work-hours" placeholder="Jornada diária (horas)" min="1" max="24" required>
+        <button type="submit">Cadastrar</button>
+    </form>
 
-<form id="register-form">
-    <input type="text" id="new-username" class="input" placeholder="Nome do funcionário" required>
-    <input type="password" id="new-password" class="input" placeholder="Senha" required>
-    <button type="submit" class="btn-primary">Cadastrar Funcionário</button>
-</form>
+    <h2>Funcionários Cadastrados</h2>
+    <ul id="employee-list"></ul>
 
-<h2>Funcionários Cadastrados</h2>
-<table>
-    <thead>
-        <tr><th>Usuário</th></tr>
-    </thead>
-    <tbody id="employees-table"></tbody>
-</table>
+    <button id="logout-btn">Sair</button>
 </div>
+<script src="app.js"></script>
 </body>
 </html>
