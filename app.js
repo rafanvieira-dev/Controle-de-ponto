@@ -1,49 +1,57 @@
+// Banco de dados simulado
+let users = JSON.parse(localStorage.getItem('users')) || [
+    {username: 'admin', password: 'admin', role:'admin'}
+];
+
+function saveUsers() {
+    localStorage.setItem('users', JSON.stringify(users));
+}
+
 // Login
-const loginForm = document.getElementById('login-form');
-const registerForm = document.getElementById('register-form');
-const loginError = document.getElementById('login-error');
-const registerMsg = document.getElementById('register-msg');
-const backBtn = document.getElementById('back-btn');
-
-loginForm?.addEventListener('submit', (e) => {
+document.getElementById('login-form')?.addEventListener('submit', e=>{
     e.preventDefault();
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value.trim();
-
-    const users = JSON.parse(localStorage.getItem('funcionarios') || '[]');
-    const user = users.find(u => u.email === email && u.password === password);
-
-    if (user) {
-        localStorage.setItem('loggedUser', JSON.stringify(user));
-        if(user.isAdmin) window.location.href = 'admin.html';
-        else window.location.href = 'ponto.html';
+    const user = document.getElementById('username').value;
+    const pass = document.getElementById('password').value;
+    const u = users.find(u => u.username === user && u.password === pass);
+    if(u){
+        localStorage.setItem('loggedUser', JSON.stringify(u));
+        if(u.role === 'admin') window.location = 'admin.html';
+        else window.location = 'ponto.html';
     } else {
-        loginError.textContent = 'E-mail ou senha incorretos.';
+        alert('Usuário ou senha incorretos');
     }
 });
 
-// Cadastro (somente admin)
-registerForm?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const name = document.getElementById('name').value.trim();
-    const email = document.getElementById('register-email').value.trim();
-    const password = document.getElementById('register-password').value.trim();
+// Logout
+document.getElementById('logout-btn')?.addEventListener('click', ()=>{
+    localStorage.removeItem('loggedUser');
+    window.location = 'index.html';
+});
 
-    let users = JSON.parse(localStorage.getItem('funcionarios') || '[]');
-    if (users.find(u => u.email === email)) {
-        registerMsg.textContent = 'Usuário já cadastrado.';
-        registerMsg.className = 'text-red-600 text-center mt-2';
+// Admin - cadastrar funcionário
+document.getElementById('register-form')?.addEventListener('submit', e=>{
+    e.preventDefault();
+    const username = document.getElementById('new-username').value;
+    const password = document.getElementById('new-password').value;
+    if(users.find(u=>u.username===username)){
+        alert('Usuário já existe');
         return;
     }
-
-    const newUser = { id: Date.now(), name, email, password, pontos: [], isAdmin: false };
-    users.push(newUser);
-    localStorage.setItem('funcionarios', JSON.stringify(users));
-    registerMsg.textContent = 'Cadastro realizado!';
-    registerMsg.className = 'text-green-600 text-center mt-2';
+    users.push({username,password,role:'user'});
+    saveUsers();
+    renderEmployees();
 });
 
-// Voltar para login
-backBtn?.addEventListener('click', ()=>{
-    window.location.href = 'index.html';
-});
+// Renderiza funcionários cadastrados
+function renderEmployees(){
+    const tbody = document.getElementById('employees-table');
+    if(!tbody) return;
+    tbody.innerHTML = '';
+    users.filter(u=>u.role==='user').forEach(u=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${u.username}</td>`;
+        tbody.appendChild(tr);
+    });
+}
+
+renderEmployees();
