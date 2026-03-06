@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador de Classificação Documental - DPRJ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #27ae60;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .nenhum-resultado {
+            text-align: center;
+            color: #e74c3c;
+            font-weight: bold;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Buscador de Códigos - DPRJ</h1>
+    <p>Digite o assunto ou descrição do documento para encontrar o código correspondente:</p>
+    
+    <input type="text" id="campoBusca" onkeyup="buscarCodigo()" placeholder="Ex: férias, material, aposentadoria...">
+    
+    <table id="tabelaResultados">
+        <thead>
+            <tr>
+                <th width="15%">Código</th>
+                <th width="45%">Descrição</th>
+                <th width="20%">Guarda Corrente</th>
+                <th width="20%">Destinação Final</th>
+            </tr>
+        </thead>
+        <tbody id="corpoTabela">
+            </tbody>
+    </table>
+</div>
+
+<script>
+    // Aqui fica o nosso "Banco de Dados" extraído do seu PDF
+    const baseDeDados = [
+        { codigo: "0-0-8-1", descricao: "ACOMPANHAMENTO E INSTRUÇÃO DE AÇÃO JUDICIAL. Incluem-se documentos referentes as ações judiciais onde a DPRJ é parte.", corrente: "Enquanto vigora", final: "Permanente" },
+        { codigo: "0-2-4-2", descricao: "FÉRIAS (ASSUNTOS GERAIS). Incluem-se documentos referentes a recolhimento, escala, marcação, adiamento, transferência, desistência, interrupção e cancelamento.", corrente: "Enquanto vigora", final: "Eliminação" },
+        { codigo: "0-3-1-2-1", descricao: "Compra de material de consumo.", corrente: "Até a aprovação das contas", final: "Eliminação" },
+        { codigo: "0-2-6-1-5", descricao: "Aposentadoria. Inclui-se o pedido e a revisão, bem como a pecúnia Indenizatória.", corrente: "Enquanto vigora", final: "Guarda Permanente" },
+        { codigo: "0-0-1", descricao: "MODERNIZAÇÃO E REESTRUTURAÇÃO ADMINISTRATIVA. Projetos, estudos e normas relativos à organização e métodos.", corrente: "Enquanto vigora", final: "Guarda Permanente" },
+        { codigo: "0-6-2-2", descricao: "PROTOCOLO. Refere-se à recepção, tramitação e expedição de documentos arquivísticos.", corrente: "Enquanto vigora", final: "Eliminação" }
+    ];
+
+    // Função que faz a busca em tempo real
+    function buscarCodigo() {
+        let termo = document.getElementById("campoBusca").value.toLowerCase();
+        let corpoTabela = document.getElementById("corpoTabela");
+        
+        corpoTabela.innerHTML = ""; // Limpa os resultados anteriores
+
+        if (termo === "") return; // Se estiver vazio, não mostra nada
+
+        let resultados = baseDeDados.filter(item => 
+            item.descricao.toLowerCase().includes(termo) || 
+            item.codigo.includes(termo)
+        );
+
+        if (resultados.length > 0) {
+            resultados.forEach(item => {
+                let linha = `<tr>
+                                <td><strong>${item.codigo}</strong></td>
+                                <td>${item.descricao}</td>
+                                <td>${item.corrente}</td>
+                                <td>${item.final}</td>
+                             </tr>`;
+                corpoTabela.innerHTML += linha;
+            });
+        } else {
+            corpoTabela.innerHTML = `<tr><td colspan="4" class="nenhum-resultado">Nenhum código encontrado para este termo.</td></tr>`;
+        }
+    }
+</script>
+
+</body>
+</html>
