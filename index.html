@@ -25,16 +25,16 @@
 <body>
 
 <div class="container">
-    <h1>Buscador de Códigos de Arquivamento (DPRJ)</h1>
-    <p>Baseado na Tabela Oficial de Classificação enviada.</p>
+    <h1>Buscador Inteligente de Códigos (DPRJ)</h1>
+    <p>Digite as palavras-chave, assuntos ou sinônimos (ex: "ferias", "compra veiculo", "organismo internacional"). O sistema ignora acentos.</p>
     
-    <input type="text" id="campoBusca" onkeyup="buscarCodigo()" placeholder="Ex: Férias, 0-2-4-2, Veículo, Ação Judicial...">
+    <input type="text" id="campoBusca" onkeyup="buscarCodigo()" placeholder="Digite os assuntos procurados aqui...">
     
     <table id="tabelaResultados">
         <thead>
             <tr>
                 <th width="15%">Código</th>
-                <th width="50%">Assunto / Descrição</th>
+                <th width="50%">Assunto / Descrição Oficial</th>
                 <th width="15%">Guarda Corrente</th>
                 <th width="20%">Destinação Final</th>
             </tr>
@@ -45,63 +45,70 @@
 </div>
 
 <script>
-    // Banco de dados extraído diretamente do documento fornecido
+    // Banco de dados completo com o campo extra "sinonimos" habilitado para todos
     const baseClassificacao = [
-        { codigo: "0-0-1", descricao: "MODERNIZAÇÃO E REESTRUTURAÇÃO ADMINISTRATIVA. Projetos, estudos e normas visando modernização.", corrente: "Enquanto vigora", final: "Guarda Permanente" },
-        { codigo: "0-0-3-2", descricao: "RELATÓRIO DE ATIVIDADES SETORIAL.", corrente: "Enquanto vigora", final: "Eliminação" },
-        { codigo: "0-0-3-3", descricao: "ESTATÍSTICA PARA SUBSIDIAR A ELABORAÇÃO DE RELATÓRIOS DE ATIVIDADES", corrente: "Enquanto vigora", final: "Eliminação" },
-        { codigo: "0-0-4", descricao: "FORMALIZAÇÃO DE ACORDO, AJUSTE, CONTRATO E/OU CONVÊNIO. Inclusive Cooperação Técnica.", corrente: "Enquanto vigora", final: "Guarda Permanente" },
-        { codigo: "0-0-6-2-2", descricao: "Inspeção de Controle Interno.", corrente: "Enquanto vigora", final: "Eliminação" },
-        { codigo: "0-0-6-3-1-1", descricao: "Manifestação de interesse do cidadão (Ouvidoria, informações, esclarecimentos).", corrente: "Enquanto vigora", final: "Eliminação" },
-        { codigo: "0-0-7", descricao: "SANÇÃO ADMINISTRATIVA. Processos que resultem imposição de sanção.", corrente: "Enquanto vigora", final: "Guarda Permanente" },
-        { codigo: "0-0-8-1", descricao: "ACOMPANHAMENTO E INSTRUÇÃO DE AÇÃO JUDICIAL. Ações ordinárias, mandado de segurança.", corrente: "Enquanto vigora", final: "Guarda Permanente" },
-        { codigo: "0-0-9", descricao: "ATUAÇÃO DE DEFENSOR PÚBLICO. Ação Rescisória, Revisão Criminal, Suspeição.", corrente: "Enquanto vigora", final: "Guarda Permanente" },
-        { codigo: "0-1-0", descricao: "ORGANIZAÇÃO E FUNCIONAMENTO. Elaboração de norma, regulamentação, diretriz.", corrente: "Enquanto vigora", final: "Guarda Permanente" },
-        { codigo: "0-1-0-1", descricao: "REGISTRO NOS ÓRGÃOS COMPETENTES. Habilitação jurídica e regularização fiscal.", corrente: "Enquanto vigora", final: "Eliminação" },
-        { codigo: "0-1-0-2", descricao: "REGIMENTO. REGULAMENTO. ESTATUTO, ORGANOGRAMA, ESTRUTURA", corrente: "Enquanto vigora", final: "Guarda Permanente" },
-        { codigo: "0-1-2-1-3", descricao: "Release de matérias (decisões) sobre a DPRJ a serem divulgadas pela imprensa.", corrente: "1 Ano", final: "Guarda Permanente" },
-        { codigo: "0-1-2-2-1", descricao: "Informativo Interno e Boletins.", corrente: "1 Ano", final: "Guarda Permanente" },
-        { codigo: "0-1-2-4", descricao: "REGISTRO SONORO, FOTOGRÁFICO E AUDIOVISUAL", corrente: "2 Anos", final: "Guarda Permanente" },
-        { codigo: "0-2-0-1", descricao: "IDENTIFICAÇÃO FUNCIONAL. Carteira, cartão, crachá, credencial.", corrente: "Enquanto houver vínculo", final: "Eliminação" },
-        { codigo: "0-2-0-6", descricao: "ASSENTAMENTO FUNCIONAL. CADASTRO. Vida funcional do Defensor/Servidor (pasta individual).", corrente: "Enquanto houver vínculo", final: "Eliminação" },
-        { codigo: "0-2-0-7-1", descricao: "Controle de frequência. Livro de ponto, cartão de ponto, mudança de carga horária, hora extra.", corrente: "Enquanto vigora", final: "Eliminação" },
-        { codigo: "0-2-3-1-1", descricao: "Admissão. Aproveitamento. Contratação. Nomeação. Readmissão.", corrente: "Enquanto houver vínculo", final: "Eliminação" },
-        { codigo: "0-2-3-1-2", descricao: "Demissão. Dispensa. Exoneração. Rescisão contratual. Falecimento.", corrente: "Enquanto houver vínculo", final: "Eliminação" },
-        { codigo: "0-2-3-1-3", descricao: "Lotação. Remoção. Transferência. Permuta.", corrente: "Enquanto houver vínculo", final: "Eliminação" },
-        { codigo: "0-2-4-1", descricao: "FOLHA DE PAGAMENTO, FICHA FINANCEIRA", corrente: "Enquanto vigora", final: "Eliminação" },
-        { codigo: "0-2-4-1-0-1", descricao: "Contra cheque. 2ª via e outros assuntos.", corrente: "Enquanto vigora", final: "Eliminação" },
-        { codigo: "0-2-4-1-2-3", descricao: "Gratificação Natalina (décimo terceiro salário)", corrente: "Enquanto vigora", final: "Eliminação" },
-        { codigo: "0-2-4-1-3-1", descricao: "Adicional de Tempo de Serviço. (Triênio e quinquênio).", corrente: "Enquanto vigora", final: "Guarda Permanente" },
-        { codigo: "0-2-4-2", descricao: "FÉRIAS (ASSUNTOS GERAIS). Escala, marcação, cancelamento, transferência.", corrente: "Enquanto vigora", final: "Eliminação" },
-        { codigo: "0-2-5-1-2", descricao: "Penalidade Disciplinar. Advertência, suspensão, exclusão, demissão.", corrente: "Até a conclusão", final: "Guarda Permanente" },
-        { codigo: "0-2-6-1-5", descricao: "Aposentadoria. Pedido, revisão e pecúnia Indenizatória.", corrente: "Enquanto vigora", final: "Guarda Permanente" },
-        { codigo: "0-2-6-1-6-1", descricao: "Prontuário Médico do Defensor/Servidor.", corrente: "Enquanto houver vínculo", final: "Eliminação" },
-        { codigo: "0-2-7-1", descricao: "MISSÃO FORA DA SEDE / VIAGEM A SERVIÇO NO BRASIL - SEM ÔNUS.", corrente: "Enquanto vigora", final: "Eliminação" },
-        { codigo: "0-2-7-2", descricao: "MISSÃO FORA DA SEDE / VIAGEM A SERVIÇO NO BRASIL - COM ÔNUS. Ajuda de custo, diária, prestação de contas.", corrente: "Até a aprovação das contas", final: "Eliminação" },
-        { codigo: "0-3-1-1-1", descricao: "Compra ou aluguel de material permanente. Importação, leasing.", corrente: "Até a aprovação das contas", final: "Eliminação" },
-        { codigo: "0-3-1-2-1", descricao: "Compra de material de consumo.", corrente: "Até a aprovação das contas", final: "Eliminação" },
-        { codigo: "0-3-2-1", descricao: "CONTROLE DE ESTOQUE. Requisição, distribuição e RMA.", corrente: "Enquanto vigora", final: "Eliminação" },
-        { codigo: "0-3-3-5", descricao: "BAIXA PATRIMONIAL DE MATERIAL", corrente: "Enquanto vigora", final: "Guarda Permanente" },
-        { codigo: "0-4-1-0-2-1", descricao: "Água e esgoto, gás ou energia elétrica.", corrente: "Até a aprovação das contas", final: "Eliminação" },
-        { codigo: "0-4-1-0-2-2", descricao: "Transmissão de dados, voz e imagem. Telefone, Internet.", corrente: "Até a aprovação das contas", final: "Eliminação" },
-        { codigo: "0-4-1-1-1", descricao: "Compra de imóvel.", corrente: "Até a aprovação das contas", final: "Guarda Permanente" },
-        { codigo: "0-4-1-4-1", descricao: "Reforma. Recuperação. Restauração. Construção.", corrente: "Até a aprovação das contas", final: "Guarda Permanente" },
-        { codigo: "0-4-2-1-1", descricao: "Compra ou aluguel de veículo.", corrente: "Até a aprovação das contas", final: "Eliminação" },
-        { codigo: "0-4-2-4", descricao: "ABASTECIMENTO, LIMPEZA, MANUTENÇÃO E REPARO DE VEÍCULO", corrente: "Até a aprovação das contas", final: "Eliminação" },
-        { codigo: "0-4-2-6", descricao: "ACIDENTE DE VEÍCULO COM VÍTIMA", corrente: "Até a conclusão da apuração", final: "Eliminação" },
-        { codigo: "0-4-3-1", descricao: "INVENTÁRIO DE BENS IMÓVEIS E VEÍCULOS", corrente: "Até a aprovação das contas", final: "Guarda Permanente" },
-        { codigo: "0-5-0-1", descricao: "AUDITORIA", corrente: "Até a aprovação das contas", final: "Guarda Permanente" },
-        { codigo: "0-5-1-1-2", descricao: "Proposta Orçamentária.", corrente: "Enquanto vigora", final: "Guarda Permanente" },
-        { codigo: "0-5-2-2-2-1", descricao: "Pagamento de aquisição de bens/contratação de serviços.", corrente: "Até a aprovação das contas", final: "Eliminação" },
-        { codigo: "0-5-7-1", descricao: "TOMADA DE CONTAS Inclusive Tomada de Contas Especial.", corrente: "Até a aprovação das contas", final: "Guarda Permanente" },
-        { codigo: "0-6-2-2", descricao: "PROTOCOLO. Recepção, tramitação e expedição de documentos arquivísticos.", corrente: "Enquanto vigora", final: "Eliminação" },
-        { codigo: "0-6-2-2-2", descricao: "Registro e autuação de processos. Livro Tombo.", corrente: "Enquanto vigora", final: "Guarda Permanente" },
-        { codigo: "0-6-2-5-2", descricao: "Eliminação de documentos (termo, listagem e edital).", corrente: "Enquanto vigora", final: "Guarda Permanente" },
-        { codigo: "0-7-1", descricao: "PLANO E PROJETO DE INFORMÁTICA. Inclui plano de contingência.", corrente: "Enquanto vigora", final: "Guarda Permanente" },
-        { codigo: "0-7-2-3", descricao: "AQUISIÇÃO DE SOLUÇÕES DE TECNOLOGIA DA INFORMAÇÃO. Software e certificados.", corrente: "Até a aprovação das contas", final: "Guarda Permanente" },
-        { codigo: "0-8-0", descricao: "ASSOCIAÇÕES CULTURAIS, DE AMIGOS E DE DEFENSORES/SERVIDORES.", corrente: "Enquanto vigora", final: "Guarda Permanente" }
+        { codigo: "0-0-1", descricao: "MODERNIZAÇÃO E REESTRUTURAÇÃO ADMINISTRATIVA. Projetos, estudos e normas visando modernização.", corrente: "Enquanto vigora", final: "Guarda Permanente", sinonimos: "" },
+        { codigo: "0-0-3-2", descricao: "RELATÓRIO DE ATIVIDADES SETORIAL.", corrente: "Enquanto vigora", final: "Eliminação", sinonimos: "" },
+        { codigo: "0-0-3-3", descricao: "ESTATÍSTICA PARA SUBSIDIAR A ELABORAÇÃO DE RELATÓRIOS DE ATIVIDADES", corrente: "Enquanto vigora", final: "Eliminação", sinonimos: "" },
+        { codigo: "0-0-4", descricao: "FORMALIZAÇÃO DE ACORDO, AJUSTE, CONTRATO E/OU CONVÊNIO. Inclusive Cooperação Técnica.", corrente: "Enquanto vigora", final: "Guarda Permanente", sinonimos: "parceria" },
+        { codigo: "0-0-6-2-2", descricao: "Inspeção de Controle Interno.", corrente: "Enquanto vigora", final: "Eliminação", sinonimos: "" },
+        { codigo: "0-0-6-3-1-1", descricao: "Manifestação de interesse do cidadão (Ouvidoria, informações, esclarecimentos).", corrente: "Enquanto vigora", final: "Eliminação", sinonimos: "reclamacao elogio duvida" },
+        { codigo: "0-0-7", descricao: "SANÇÃO ADMINISTRATIVA. Processos que resultem imposição de sanção.", corrente: "Enquanto vigora", final: "Guarda Permanente", sinonimos: "punicao multa" },
+        { codigo: "0-0-8-1", descricao: "ACOMPANHAMENTO E INSTRUÇÃO DE AÇÃO JUDICIAL. Ações ordinárias, mandado de segurança onde a DPRJ é parte.", corrente: "Enquanto vigora", final: "Guarda Permanente", sinonimos: "processo tribunal juiz defesa dprj" },
+        { codigo: "0-0-9", descricao: "ATUAÇÃO DE DEFENSOR PÚBLICO. Ação Rescisória, Revisão Criminal, Suspeição.", corrente: "Enquanto vigora", final: "Guarda Permanente", sinonimos: "" },
+        { codigo: "0-1-0", descricao: "ORGANIZAÇÃO E FUNCIONAMENTO. Elaboração de norma, regulamentação, diretriz.", corrente: "Enquanto vigora", final: "Guarda Permanente", sinonimos: "" },
+        { codigo: "0-1-0-1", descricao: "REGISTRO NOS ÓRGÃOS COMPETENTES. Habilitação jurídica e regularização fiscal.", corrente: "Enquanto vigora", final: "Eliminação", sinonimos: "" },
+        { codigo: "0-1-0-2", descricao: "REGIMENTO. REGULAMENTO. ESTATUTO, ORGANOGRAMA, ESTRUTURA", corrente: "Enquanto vigora", final: "Guarda Permanente", sinonimos: "" },
+        { codigo: "0-1-2-1-3", descricao: "Release de matérias (decisões) sobre a DPRJ a serem divulgadas pela imprensa.", corrente: "1 Ano", final: "Guarda Permanente", sinonimos: "jornal noticia midia" },
+        { codigo: "0-1-2-2-1", descricao: "Informativo Interno e Boletins.", corrente: "1 Ano", final: "Guarda Permanente", sinonimos: "" },
+        { codigo: "0-1-2-4", descricao: "REGISTRO SONORO, FOTOGRÁFICO E AUDIOVISUAL", corrente: "2 Anos", final: "Guarda Permanente", sinonimos: "foto video audio gravacao" },
+        { codigo: "0-2-0-1", descricao: "IDENTIFICAÇÃO FUNCIONAL. Carteira, cartão, crachá, credencial.", corrente: "Enquanto houver vínculo", final: "Eliminação", sinonimos: "identidade acesso" },
+        { codigo: "0-2-0-6", descricao: "ASSENTAMENTO FUNCIONAL. CADASTRO. Vida funcional do Defensor/Servidor (pasta individual).", corrente: "Enquanto houver vínculo", final: "Eliminação", sinonimos: "historico rh recursos humanos" },
+        { codigo: "0-2-0-7-1", descricao: "Controle de frequência. Livro de ponto, cartão de ponto, mudança de carga horária, hora extra.", corrente: "Enquanto vigora", final: "Eliminação", sinonimos: "ponto eletronico digital atraso falta justificativa banco de horas" },
+        { codigo: "0-2-3-1-1", descricao: "Admissão. Aproveitamento. Contratação. Nomeação. Readmissão.", corrente: "Enquanto houver vínculo", final: "Eliminação", sinonimos: "entrada novo funcionario" },
+        { codigo: "0-2-3-1-2", descricao: "Demissão. Dispensa. Exoneração. Rescisão contratual. Falecimento.", corrente: "Enquanto houver vínculo", final: "Eliminação", sinonimos: "saida desligamento morte" },
+        { codigo: "0-2-3-1-3", descricao: "Lotação. Remoção. Transferência. Permuta.", corrente: "Enquanto houver vínculo", final: "Eliminação", sinonimos: "mudanca setor local" },
+        { codigo: "0-2-3-1-5", descricao: "Requisição. Cessão. Cessões internas e/ou externas de Defensor/Servidor para serviços temporários.", corrente: "Enquanto houver vínculo", final: "Eliminação", sinonimos: "afastamento servir fora emprestado organismo internacional estrangeiro" },
+        { codigo: "0-2-4-1", descricao: "FOLHA DE PAGAMENTO, FICHA FINANCEIRA", corrente: "Enquanto vigora", final: "Eliminação", sinonimos: "salario" },
+        { codigo: "0-2-4-1-0-1", descricao: "Contra cheque. 2ª via e outros assuntos.", corrente: "Enquanto vigora", final: "Eliminação", sinonimos: "holerite recibo de pagamento" },
+        { codigo: "0-2-4-1-2-3", descricao: "Gratificação Natalina (décimo terceiro salário)", corrente: "Enquanto vigora", final: "Eliminação", sinonimos: "13o 13 salario" },
+        { codigo: "0-2-4-1-3-1", descricao: "Adicional de Tempo de Serviço. (Triênio e quinquênio).", corrente: "Enquanto vigora", final: "Guarda Permanente", sinonimos: "trienio quinquenio bonus" },
+        { codigo: "0-2-4-2", descricao: "FÉRIAS (ASSUNTOS GERAIS). Escala, marcação, cancelamento, transferência.", corrente: "Enquanto vigora", final: "Eliminação", sinonimos: "descanso recesso gozo" },
+        { codigo: "0-2-5-1-2", descricao: "Penalidade Disciplinar. Advertência, suspensão, exclusão, demissão.", corrente: "Até a conclusão", final: "Guarda Permanente", sinonimos: "pad punicao castigo" },
+        { codigo: "0-2-6-1-5", descricao: "Aposentadoria. Pedido, revisão e pecúnia Indenizatória.", corrente: "Enquanto vigora", final: "Guarda Permanente", sinonimos: "inativo" },
+        { codigo: "0-2-6-1-6-1", descricao: "Prontuário Médico do Defensor/Servidor.", corrente: "Enquanto houver vínculo", final: "Eliminação", sinonimos: "saude atestado doença" },
+        { codigo: "0-2-7-1", descricao: "MISSÃO FORA DA SEDE / VIAGEM A SERVIÇO NO BRASIL - SEM ÔNUS.", corrente: "Enquanto vigora", final: "Eliminação", sinonimos: "" },
+        { codigo: "0-2-7-2", descricao: "MISSÃO FORA DA SEDE / VIAGEM A SERVIÇO NO BRASIL - COM ÔNUS. Ajuda de custo, diária, prestação de contas.", corrente: "Até a aprovação das contas", final: "Eliminação", sinonimos: "passagem hotel alimentação" },
+        { codigo: "0-3-1-1-1", descricao: "Compra ou aluguel de material permanente. Importação, leasing.", corrente: "Até a aprovação das contas", final: "Eliminação", sinonimos: "mesa cadeira computador movel equipamento" },
+        { codigo: "0-3-1-2-1", descricao: "Compra de material de consumo.", corrente: "Até a aprovação das contas", final: "Eliminação", sinonimos: "papel caneta suprimento escritorio tonner cartucho copo" },
+        { codigo: "0-3-2-1", descricao: "CONTROLE DE ESTOQUE. Requisição, distribuição e RMA.", corrente: "Enquanto vigora", final: "Eliminação", sinonimos: "almoxarifado" },
+        { codigo: "0-3-3-5", descricao: "BAIXA PATRIMONIAL DE MATERIAL", corrente: "Enquanto vigora", final: "Guarda Permanente", sinonimos: "descarte lixo quebrado" },
+        { codigo: "0-4-1-0-2-1", descricao: "Água e esgoto, gás ou energia elétrica.", corrente: "Até a aprovação das contas", final: "Eliminação", sinonimos: "conta luz cedae light" },
+        { codigo: "0-4-1-0-2-2", descricao: "Transmissão de dados, voz e imagem. Telefone, Internet.", corrente: "Até a aprovação das contas", final: "Eliminação", sinonimos: "celular wifi rede embratel oi vivo" },
+        { codigo: "0-4-1-1-1", descricao: "Compra de imóvel.", corrente: "Até a aprovação das contas", final: "Guarda Permanente", sinonimos: "predio sala terreno casa" },
+        { codigo: "0-4-1-4-1", descricao: "Reforma. Recuperação. Restauração. Construção.", corrente: "Até a aprovação das contas", final: "Guarda Permanente", sinonimos: "obra pedreiro conserto predio" },
+        { codigo: "0-4-2-1-1", descricao: "Compra ou aluguel de veículo.", corrente: "Até a aprovação das contas", final: "Eliminação", sinonimos: "carro moto viatura frota" },
+        { codigo: "0-4-2-4", descricao: "ABASTECIMENTO, LIMPEZA, MANUTENÇÃO E REPARO DE VEÍCULO", corrente: "Até a aprovação das contas", final: "Eliminação", sinonimos: "gasolina posto lavar conserto carro viatura oficina mecânica" },
+        { codigo: "0-4-2-6", descricao: "ACIDENTE DE VEÍCULO COM VÍTIMA", corrente: "Até a conclusão da apuração", final: "Eliminação", sinonimos: "batida atropelamento" },
+        { codigo: "0-4-3-1", descricao: "INVENTÁRIO DE BENS IMÓVEIS E VEÍCULOS", corrente: "Até a aprovação das contas", final: "Guarda Permanente", sinonimos: "levantamento contagem" },
+        { codigo: "0-5-0-1", descricao: "AUDITORIA", corrente: "Até a aprovação das contas", final: "Guarda Permanente", sinonimos: "fiscalizacao" },
+        { codigo: "0-5-1-1-2", descricao: "Proposta Orçamentária.", corrente: "Enquanto vigora", final: "Guarda Permanente", sinonimos: "orcamento dinheiro" },
+        { codigo: "0-5-2-2-2-1", descricao: "Pagamento de aquisição de bens/contratação de serviços.", corrente: "Até a aprovação das contas", final: "Eliminação", sinonimos: "nota fiscal boleto fornecedor" },
+        { codigo: "0-5-7-1", descricao: "TOMADA DE CONTAS Inclusive Tomada de Contas Especial.", corrente: "Até a aprovação das contas", final: "Guarda Permanente", sinonimos: "tce" },
+        { codigo: "0-6-2-2", descricao: "PROTOCOLO. Recepção, tramitação e expedição de documentos arquivísticos.", corrente: "Enquanto vigora", final: "Eliminação", sinonimos: "malote correio sedex entrega" },
+        { codigo: "0-6-2-2-2", descricao: "Registro e autuação de processos. Livro Tombo.", corrente: "Enquanto vigora", final: "Guarda Permanente", sinonimos: "capa processo numeracao" },
+        { codigo: "0-6-2-5-2", descricao: "Eliminação de documentos (termo, listagem e edital).", corrente: "Enquanto vigora", final: "Guarda Permanente", sinonimos: "jogar fora destruir picotar fragmentar" },
+        { codigo: "0-7-1", descricao: "PLANO E PROJETO DE INFORMÁTICA. Inclui plano de contingência.", corrente: "Enquanto vigora", final: "Guarda Permanente", sinonimos: "ti tecnologia" },
+        { codigo: "0-7-2-3", descricao: "AQUISIÇÃO DE SOLUÇÕES DE TECNOLOGIA DA INFORMAÇÃO. Software e certificados.", corrente: "Até a aprovação das contas", final: "Guarda Permanente", sinonimos: "programa licenca antivirus windows office token" },
+        { codigo: "0-8-0", descricao: "ASSOCIAÇÕES CULTURAIS, DE AMIGOS E DE DEFENSORES/SERVIDORES.", corrente: "Enquanto vigora", final: "Guarda Permanente", sinonimos: "sindicato clube" }
     ];
 
+    // Função para remover acentos
+    function removerAcentos(texto) {
+        return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }
+
+    // Formata visualmente a destinação final
     function formatarDest(texto) {
         if(texto.toLowerCase().includes("elimina")) return `<span class="badge-elimina">${texto}</span>`;
         if(texto.toLowerCase().includes("permanente")) return `<span class="badge-guarda">${texto}</span>`;
@@ -109,16 +116,26 @@
     }
 
     function buscarCodigo() {
-        let busca = document.getElementById("campoBusca").value.toLowerCase();
+        let inputRaw = document.getElementById("campoBusca").value.toLowerCase();
         let corpoTabela = document.getElementById("corpoTabela");
         corpoTabela.innerHTML = ""; 
 
-        if (busca === "") return; 
+        if (inputRaw.trim() === "") return; 
 
-        let filtrados = baseClassificacao.filter(item => 
-            item.descricao.toLowerCase().includes(busca) || 
-            item.codigo.includes(busca)
-        );
+        let termosDeBusca = removerAcentos(inputRaw).split(" ").filter(t => t.trim() !== "");
+
+        let filtrados = baseClassificacao.filter(item => {
+            let descNorm = removerAcentos(item.descricao.toLowerCase());
+            let codNorm = item.codigo.toLowerCase();
+            let sinNorm = item.sinonimos ? removerAcentos(item.sinonimos.toLowerCase()) : "";
+
+            // Verifica se TODAS as palavras digitadas estão presentes na descrição, código ou sinônimos
+            return termosDeBusca.every(termo => 
+                descNorm.includes(termo) || 
+                codNorm.includes(termo) || 
+                sinNorm.includes(termo)
+            );
+        });
 
         if (filtrados.length > 0) {
             filtrados.forEach(item => {
@@ -131,7 +148,7 @@
                 corpoTabela.innerHTML += linha;
             });
         } else {
-            corpoTabela.innerHTML = `<tr><td colspan="4" class="nenhum">Nenhum código encontrado para este assunto.</td></tr>`;
+            corpoTabela.innerHTML = `<tr><td colspan="4" class="nenhum">Nenhum resultado encontrado. Tente outras palavras.</td></tr>`;
         }
     }
 </script>
